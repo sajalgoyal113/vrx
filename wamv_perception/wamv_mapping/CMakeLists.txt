@@ -1,34 +1,18 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(wamv_vision)
+project(wamv_mapping)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-add_compile_options(-std=c++11)
+# add_compile_options(-std=c++11)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  cv_bridge
   roscpp
   rospy
-  genmsg
-  sensor_msgs
   std_msgs
-  dynamic_reconfigure
-  image_transport
-  message_generation
-  geometry_msgs
+  octomap_ros REQUIRED
 )
-find_package(Boost REQUIRED COMPONENTS system)
-find_package(OpenCV REQUIRED)
-generate_messages (
-    DEPENDENCIES
-    std_msgs   
-)
-
-
-catkin_package(LIBRARIES wamv_vision)
-
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -69,8 +53,6 @@ catkin_package(LIBRARIES wamv_vision)
 #   Message1.msg
 #   Message2.msg
 # )
-
-#generate_messages(DEPENDENCIES std_msgs)
 
 ## Generate services in the 'srv' folder
 # add_service_files(
@@ -123,7 +105,7 @@ catkin_package(LIBRARIES wamv_vision)
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES wamv_vision
+#  LIBRARIES wamv_lidar
 #  CATKIN_DEPENDS roscpp rospy std_msgs
 #  DEPENDS system_lib
 )
@@ -139,10 +121,10 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-## Declare a C++ library
-# add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/wamv_vision.cpp
-# )
+
+include_directories(${OCTOMAP_INCLUDE_DIRS})
+# target_link_libraries(${OCTOMAP_LIBRARIES})
+
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -152,7 +134,7 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-# add_executable(${PROJECT_NAME}_node src/wamv_vision_node.cpp)
+# add_executable(${PROJECT_NAME}_node src/wamv_lidar_node.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -216,22 +198,10 @@ include_directories(
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_wamv_vision.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_wamv_lidar.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
-
-add_executable(image src/open.cpp)
-target_link_libraries(image ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
-add_dependencies(image wamv_vision_generate_messages_cpp)
-
-add_executable(image1 src/open1.cpp)
-target_link_libraries(image1 ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
-add_dependencies(image1 wamv_vision_generate_messages_cpp)
-
-add_executable(talker src/test.cpp)
-target_link_libraries(talker ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
-add_dependencies(talker wamv_vision_generate_messages_cpp)
